@@ -30,7 +30,7 @@ const corsOrigin = process.env.CLIENT_ORIGIN || "*";
 
 // Allow frontend domain for all routes
 app.use(cors({
-  origin: "https:tommalu.netlify.app", // your frontend URL
+  origin: "https://tommalu.netlify.app", // your frontend URL
   credentials: true
 }));
 

@@ -38,6 +38,10 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "owner", "user"], 
       default: "user" 
     },
+     address: {
+    type: String, // simple string (Street, City, Pincode)
+    default: "Jaipur",
+  },
     status: { 
       type: String, 
       enum: ["active", "pending", "disabled"], 

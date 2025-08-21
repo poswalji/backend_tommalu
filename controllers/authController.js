@@ -13,7 +13,7 @@ const genToken = (id) =>
 
 // --- REGISTER ---
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password, phone, role, restaurant } = req.body;
+  const { name, email, password, phone, role, restaurant,address } = req.body;
   if (!name || !email || !password || !phone)
     return res.status(400).json({ message: "Missing fields" });
 
@@ -28,6 +28,7 @@ export const register = asyncHandler(async (req, res) => {
     email,
     phone,
     password: hash,
+    address,
     role: role || "user",
     status
   });
@@ -60,6 +61,7 @@ export const register = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+    address:user.address,
       role: user.role,
       status: user.status
     }
@@ -93,6 +95,7 @@ export const login = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      address:user.address,
       role: user.role,
       status: user.status
     }
@@ -121,8 +124,9 @@ export const googleAuth = asyncHandler(async (req, res) => {
       password: null, // google se aya hai, password nahi
       phone: "",
       role: "user",
+      address:'',
       status: "active",
-      avatar: picture
+     
     });
   }
 
@@ -142,8 +146,9 @@ export const googleAuth = asyncHandler(async (req, res) => {
       email: user.email,
       phone: user.phone,
       role: user.role,
+      address:user.address,
       status: user.status,
-      avatar: user.avatar
+      
     }
   });
 });
@@ -172,5 +177,33 @@ export const logout = asyncHandler(async (req, res) => {
     sameSite: "strict"
   });
   res.json({ success: true, message: "Logged out successfully" });
+});
+/////Updqate Profile/////////////////
+export const updateProfile = asyncHandler(async (req, res) => {
+  const userId = req.user._id; // token से authenticated user
+  const { name, email, phone, address } = req.body;
+
+  const user = await User.findById(userId);
+  if (!user) return res.status(404).json({ message: "User not found" });
+
+  user.name = name || user.name;
+  user.email = email || user.email;
+  user.phone = phone || user.phone;
+  user.address = address || user.address;
+
+  await user.save();
+
+  res.json({
+    message: "Profile updated successfully",
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      address: user.address,
+      role: user.role,
+      status: user.status,
+    },
+  });
 });
   

@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: [true, "Phone number is required"],
+      
       unique: true,
       validate: {
         validator: (v) => /^\+?[0-9]{10,15}$/.test(v),

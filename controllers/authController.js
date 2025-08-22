@@ -13,7 +13,7 @@ const genToken = (id) =>
 
 // --- REGISTER ---
 export const register = asyncHandler(async (req, res) => {
-  const { name, email, password, phone, role, restaurant,address } = req.body;
+  const { name, email, password, phone, role, restaurant, address } = req.body;
   if (!name || !email || !password || !phone)
     return res.status(400).json({ message: "Missing fields" });
 
@@ -61,7 +61,7 @@ export const register = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
-    address:user.address,
+      address: user.address,
       role: user.role,
       status: user.status
     }
@@ -81,10 +81,11 @@ export const login = asyncHandler(async (req, res) => {
     return res.status(403).json({ message: "Owner not approved yet" });
 
   const token = genToken(user._id);
+
   res.cookie("token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
 
@@ -95,7 +96,7 @@ export const login = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      address:user.address,
+      address: user.address,
       role: user.role,
       status: user.status
     }
@@ -113,28 +114,27 @@ export const googleAuth = asyncHandler(async (req, res) => {
   });
 
   const payload = ticket.getPayload();
-  const { email, name, picture } = payload;
+  const { email, name } = payload;
 
   let user = await User.findOne({ email });
-
   if (!user) {
     user = await User.create({
       name,
       email,
-      password: null, // google se aya hai, password nahi
+      password: null,
       phone: "",
       role: "user",
-      address:'',
+      address: "",
       status: "active",
-     
     });
   }
 
   const authToken = genToken(user._id);
+
   res.cookie("token", authToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
 
@@ -145,10 +145,9 @@ export const googleAuth = asyncHandler(async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      address: user.address,
       role: user.role,
-      address:user.address,
       status: user.status,
-      
     }
   });
 });
@@ -174,14 +173,14 @@ export const logout = asyncHandler(async (req, res) => {
   res.cookie("token", "", {
     httpOnly: true,
     expires: new Date(0),
-    sameSite: "strict"
+    sameSite: "lax"
   });
   res.json({ success: true, message: "Logged out successfully" });
 });
-/////Updqate Profile/////////////////
-export const updateProfile = asyncHandler(async (req, res) => {
 
-  const userId = req.user._id; // token से authenticated user
+// --- UPDATE PROFILE ---
+export const updateProfile = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
   const { name, email, phone, address } = req.body;
 
   const user = await User.findById(userId);
@@ -207,4 +206,3 @@ export const updateProfile = asyncHandler(async (req, res) => {
     },
   });
 });
-  

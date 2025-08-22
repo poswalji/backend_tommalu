@@ -5,7 +5,7 @@ import { protect } from "../middleware/authMiddleware.js";
 const router = Router();
 //udate //
 
-router.put("/profile",protect, updateProfile);
+router.put("/profile",protect,updateProfile);
 
 // Email-Password Auth
 router.post("/register", register);

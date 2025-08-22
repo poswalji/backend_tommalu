@@ -47,12 +47,12 @@ export const register = asyncHandler(async (req, res) => {
   }
 
   const token = genToken(user._id);
-res.cookie("token", token, {
-  httpOnly: true,
-  secure: true,          // must be true if frontend/backend on different domains
-  sameSite: "none",      // required for cross-site cookies
-  maxAge: 7 * 24 * 60 * 60 * 1000,
-});
+  res.cookie("token", token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
 
   return res.status(201).json({
     message: "Registered successfully",
@@ -84,8 +84,8 @@ export const login = asyncHandler(async (req, res) => {
 
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
 
@@ -133,8 +133,8 @@ export const googleAuth = asyncHandler(async (req, res) => {
 
   res.cookie("token", authToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    secure: true,
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
 
